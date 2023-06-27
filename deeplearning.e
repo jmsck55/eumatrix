@@ -1,4 +1,4 @@
--- Copyright (c) James Cook
+-- Copyright (c) 2023 James Cook
 -- Deep learning using matrix multiplication.
 
 namespace deeplearning
@@ -115,7 +115,7 @@ end function
 --end function
 
 public function BackPropagation(sequence self, integer func_sigma_derivative = ReLU_derivative_id)
-
+-- Currently, it only works for two (2) hidden layers.
     sequence s, d_weights1, d_weights2
 
     s = 2 * (self[Y] - self[OUTPUT]) * call_func(func_sigma_derivative, {self[OUTPUT]})
