@@ -30,7 +30,7 @@ public function NewNetwork(object x, object y, sequence weights)
     s = repeat(0, 5)
 
     s[INPUT] = x
-    s[WEIGHTS] = weights
+    s[WEIGHTS] = weights -- NOTE: You have to come up with the weights yourself.
     s[Y] = y
     s[OUTPUT] = 0
     s[LAYERS] = {}
