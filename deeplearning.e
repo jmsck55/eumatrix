@@ -3,6 +3,8 @@
 
 namespace deeplearning
 
+include std/math.e
+
 public include matrix.e
 
 -- input layer, x
@@ -68,7 +70,24 @@ public function ReLU_derivative(object x)
 end function
 public constant ReLU_derivative_id = routine_id("ReLU_derivative")
 
-public function FeedForward1(object x, object W, object b = 0, integer func_sigma = ReLU_id)
+-- sigmoid function, and derivative
+-- f(x) = 1 / (1 + exp(- (x)))
+-- f'(x) = exp(- (x)) / power(1 + exp(- (x), 2)
+-- f'(x) = f(x) * (1 - f(x))
+
+public function sigmoid(object x)
+    return 1 / (1 + exp(- (x)))
+end function
+public constant sigmoid_id = routine_id("sigmoid")
+
+public function sigmoid_derivative(object x)
+    object tmp
+    tmp = sigmoid(x)
+    return tmp * (1 - (tmp))
+end function
+public constant sigmoid_derivative_id = routine_id("sigmoid_derivative")
+
+public function FeedForward1(object x, object W, object b = 0, integer func_sigma = sigmoid_id)
     -- Call this function once for every layer, replacing the first argument with the output of the previous function call.
     object a, z
     a = MatrixMultiplication(W, x) -- (W * x), or (x * W) ???
@@ -77,7 +96,7 @@ public function FeedForward1(object x, object W, object b = 0, integer func_sigm
     return z
 end function
 
-public function FeedForward(sequence self, integer func_sigma = ReLU_id)
+public function FeedForward(sequence self, integer func_sigma = sigmoid_id)
     sequence layers, layer
     integer len
     len = length(self[WEIGHTS])
@@ -109,12 +128,12 @@ public function SumOfSquares(object wanted, object got)
     return sum
 end function
 
---public function BackPropagation1(sequence self, integer func_sigma_derivative = ReLU_derivative_id, object private = 0)
+--public function BackPropagation1(sequence self, integer func_sigma_derivative = sigmoid_derivative_id, object private = 0)
 --    
 --    return self
 --end function
 
-public function BackPropagation(sequence self, integer func_sigma_derivative = ReLU_derivative_id)
+public function BackPropagation(sequence self, integer func_sigma_derivative = sigmoid_derivative_id)
 -- Currently, it only works for two (2) hidden layers.
     sequence s, d_weights1, d_weights2
 
