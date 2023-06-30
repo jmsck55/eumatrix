@@ -72,13 +72,22 @@ public constant ReLU_derivative_id = routine_id("ReLU_derivative")
 
 -- sigmoid function, and derivative
 -- f(x) = 1 / (1 + exp(- (x)))
--- f'(x) = exp(- (x)) / power(1 + exp(- (x), 2)
+-- f'(x) = exp(- (x)) / power(1 + exp(- (x)), 2)
 -- f'(x) = f(x) * (1 - f(x))
 
 public function sigmoid(object x)
     return 1 / (1 + exp(- (x)))
 end function
 public constant sigmoid_id = routine_id("sigmoid")
+
+public function sigmoid_derivativeA(object x)
+    object tmp1, tmp
+    tmp1 = exp(- (x))
+    tmp = tmp1 + 1
+    tmp = tmp * tmp
+    return tmp1 / tmp
+end function
+public constant sigmoid_derivativeA_id = routine_id("sigmoid_derivativeA")
 
 public function sigmoid_derivative(object x)
     object tmp
