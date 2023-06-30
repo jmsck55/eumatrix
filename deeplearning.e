@@ -11,7 +11,7 @@ public include matrix.e
 -- hidden layers
 -- output layer, y
 -- weights and biases, W and b
--- activation function, sigma (such as Sigmoid activation function)
+-- activation function, sigma (as in a Sigmoid activation function)
 
 public constant
     INPUT = 1,
@@ -39,36 +39,6 @@ public function NewNetwork(object x, object y, sequence weights)
     return s
 end function
 
-public function ReLU(object x)
-    if atom(x) then
-        if x <= 0 then
-            return 0
-        else
-            return x
-        end if
-    end if
-    for i = 1 to length(x) do
-        x[i] = ReLU(x[i])
-    end for
-    return x
-    -- return max(0, x)
-end function
-public constant ReLU_id = routine_id("ReLU")
-
-public function ReLU_derivative(object x)
-    if atom(x) then
-        if x <= 0 then
-            return 0
-        else
-            return 1
-        end if
-    end if
-    for i = 1 to length(x) do
-        x[i] = ReLU_derivative(x[i])
-    end for
-    return x
-end function
-public constant ReLU_derivative_id = routine_id("ReLU_derivative")
 
 -- sigmoid function, and derivative
 -- f(x) = 1 / (1 + exp(- (x)))
@@ -137,10 +107,6 @@ public function SumOfSquares(object wanted, object got)
     return sum
 end function
 
---public function BackPropagation1(sequence self, integer func_sigma_derivative = sigmoid_derivative_id, object private = 0)
---    
---    return self
---end function
 
 public function BackPropagation(sequence self, integer func_sigma_derivative = sigmoid_derivative_id)
 -- Currently, it only works for two (2) hidden layers.
