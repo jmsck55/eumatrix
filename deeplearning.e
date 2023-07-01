@@ -3,8 +3,7 @@
 
 namespace deeplearning
 
-include std/math.e
-
+public include std/math.e
 public include matrix.e
 
 -- input layer, x
