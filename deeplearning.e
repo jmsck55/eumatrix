@@ -82,7 +82,7 @@ public function FeedForward(sequence self, integer func_sigma = sigmoid_id)
     layers = repeat(0, len)
     layer = self[INPUT]
     for i = 1 to len do
-        layer = FeedForward1(layer, self[WEIGHTS][i], 0, ReLU_id)
+        layer = FeedForward1(layer, self[WEIGHTS][i], 0, func_sigma)
         layers[i] = layer
     end for
     self[OUTPUT] = layer
