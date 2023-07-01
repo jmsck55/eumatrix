@@ -20,7 +20,7 @@ public function IsMatrixMultiply(sequence a, sequence b)
 end function
 
 public function MatrixMultiplication(sequence a, sequence b)
-    sequence c, rowA
+    sequence c
     integer m
     object sum
     m = cols(a)
@@ -29,10 +29,9 @@ public function MatrixMultiplication(sequence a, sequence b)
     end if
     c = repeat(0, rows(a))
     for i = 1 to rows(a) do
-        rowA = a[i]
-        sum = b[1] * rowA[1]
+        sum = b[1] * a[i][1]
         for k = 2 to m do
-            sum += b[k] * rowA[k]
+            sum += b[k] * a[i][k]
             -- c[i][j] = a[i][k] * b[k][j]
         end for
         c[i] = sum
