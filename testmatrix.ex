@@ -1,11 +1,37 @@
 -- Copyright (c) 2023 James Cook
 
+
 with trace
-trace(1)
 
 include matrix.e
 
-object c, d
+without trace
+include deeplearning.e
+with trace
+
+trace(1)
+
+object a, b, c, d
+
+a = {
+    {1, 0, -2},
+    {0, 3, -1}
+}
+b = {
+    {0, 3},
+    {-2, -1},
+    {0, 4}
+}
+
+c = {
+    {0, -5},
+    {-6, -7}
+}
+
+d = MatrixMultiplication(a, b)
+? d
+
+? equal(c, d)
 
 c = {
     {2, -1},
@@ -19,4 +45,4 @@ d = {
 }
 
 ? MatrixMultiplication(c, d)
-? MatrixMultiplication(d, c)
+--? MatrixMultiplication(d, c)

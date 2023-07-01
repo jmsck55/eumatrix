@@ -39,20 +39,19 @@ public function NewNetwork(object x, object y, sequence weights)
     return s
 end function
 
-
 -- sigmoid function, and derivative
 -- f(x) = 1 / (1 + exp(- (x)))
 -- f'(x) = exp(- (x)) / power(1 + exp(- (x)), 2)
 -- f'(x) = f(x) * (1 - f(x))
 
 public function sigmoid(object x)
-    return 1 / (1 + exp(- (x)))
+    return 1 / (1 + math:exp(- (x)))
 end function
 public constant sigmoid_id = routine_id("sigmoid")
 
 public function sigmoid_derivativeA(object x)
     object tmp1, tmp
-    tmp1 = exp(- (x))
+    tmp1 = math:exp(- (x))
     tmp = tmp1 + 1
     tmp = tmp * tmp
     return tmp1 / tmp
