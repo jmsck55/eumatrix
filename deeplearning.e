@@ -68,7 +68,9 @@ public function FeedForward1(object x, object W, object b = 0, integer func_sigm
     -- Call this function once for every layer, replacing the first argument with the output of the previous function call.
     object a, z
     a = MatrixMultiplication(W, x) -- (W * x), or (x * W) ???
-    a += b
+    if not equal(0, b) then
+        a += b
+    end if
     z = call_func(func_sigma, {a})
     return z
 end function
