@@ -46,7 +46,6 @@ end function
 public function sigmoid(object x)
     return 1 / (1 + math:exp(- (x)))
 end function
-public constant sigmoid_id = routine_id("sigmoid")
 
 public function sigmoid_derivativeA(object x)
     object tmp1, tmp
@@ -55,34 +54,32 @@ public function sigmoid_derivativeA(object x)
     tmp = tmp * tmp
     return tmp1 / tmp
 end function
-public constant sigmoid_derivativeA_id = routine_id("sigmoid_derivativeA")
 
 public function sigmoid_derivative(object x)
     object tmp
     tmp = sigmoid(x)
     return tmp * (1 - (tmp))
 end function
-public constant sigmoid_derivative_id = routine_id("sigmoid_derivative")
 
-public function FeedForward1(object x, object W, object b = 0, integer func_sigma = sigmoid_id)
+public function FeedForward1(object x, object W, object b = 0)
     -- Call this function once for every layer, replacing the first argument with the output of the previous function call.
     object a, z
     a = MatrixMultiplication(W, x) -- (W * x), or (x * W) ???
     if not equal(0, b) then
         a += b
     end if
-    z = call_func(func_sigma, {a})
+    z = sigmoid(a)
     return z
 end function
 
-public function FeedForward(sequence self, integer func_sigma = sigmoid_id)
+public function FeedForward(sequence self)
     sequence layers, layer
     integer len
     len = length(self[WEIGHTS])
     layers = repeat(0, len)
     layer = self[INPUT]
     for i = 1 to len do
-        layer = FeedForward1(layer, self[WEIGHTS][i], 0, func_sigma)
+        layer = FeedForward1(layer, self[WEIGHTS][i], 0)
         layers[i] = layer
     end for
     self[OUTPUT] = layer
@@ -108,19 +105,19 @@ public function SumOfSquares(object wanted, object got)
 end function
 
 
-public function BackPropagation(sequence self, integer func_sigma_derivative = sigmoid_derivative_id)
+public function BackPropagation(sequence self)
     sequence s, d
 
     -- # application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
     -- d_weights2 = np.dot(self.layer1.T, (2*(self.y - self.output) * sigmoid_derivative(self.output)))
 
-    s = 2 * (self[Y] - self[OUTPUT]) * call_func(func_sigma_derivative, {self[OUTPUT]})
+    s = 2 * (self[Y] - self[OUTPUT]) * sigmoid_derivative(self[OUTPUT])
 
     d = repeat(0, length(self[WEIGHTS]))
     self[LAYERS] = {self[INPUT]} & self[LAYERS]
     d[$] = MatrixMultiplication(MatrixTransformation(self[LAYERS][$]), s)
     for i = length(d) - 1 to 1 by -1 do
-        s = MatrixMultiplication(s, MatrixTransformation(self[WEIGHTS][i + 1]) * call_func(func_sigma_derivative, {self[LAYERS][i]}))
+        s = ( MatrixMultiplication( s, MatrixTransformation(self[WEIGHTS][i + 1]) ) * sigmoid_derivative(self[LAYERS][i]) )
 
         d[i] = MatrixMultiplication(MatrixTransformation(self[LAYERS][i]), s)
     end for
@@ -129,10 +126,10 @@ public function BackPropagation(sequence self, integer func_sigma_derivative = s
     return self
 
     -- d_weights1 = np.dot(self.input.T,  (np.dot(2*(self.y - self.output) * sigmoid_derivative(self.output), self.weights2.T) * sigmoid_derivative(self.layer1)))
-
     -- # update the weights with the derivative (slope) of the loss function
     -- self.weights1 += d_weights1
     -- self.weights2 += d_weights2
+
 end function
 
 /*
