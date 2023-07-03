@@ -15,18 +15,34 @@ public function cols(sequence a)
     return length(a[1])
 end function
 
-public type IsMatrix(sequence a)
+public function IsMatrix(sequence a, integer strictMatrix = 0)
     integer c
-    if length(s) = 0 then
+    if length(a) = 0 then
         return 0
     end if
     c = length(a[1])
-    for i = 1 to length(s) do
-        if c != length(a[i])
+    for i = 1 to length(a) do
+        if c != length(a[i]) then
             return 0
+        elsif strictMatrix then
+            for j = 1 to c do
+                if sequence(a[i][j]) then
+                    return 0
+                end if
+            end for
         end if
     end for
     return 1
+end function
+
+public type MatrixStrict(sequence a)
+-- MatrixStrict() type has to be a row by column matrix of atoms.
+    return IsMatrix(a, 1)
+end type
+
+public type Matrix(sequence a)
+-- Matrix() type has less type checking, and can be a row by column matrix of anything.
+    return IsMatrix(a)
 end type
 
 public function IsMatrixMultiply(sequence a, sequence b)
