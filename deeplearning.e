@@ -109,21 +109,30 @@ end function
 
 
 public function BackPropagation(sequence self, integer func_sigma_derivative = sigmoid_derivative_id)
--- Currently, it only works for two (2) hidden layers.
-    sequence s, d_weights1, d_weights2
+    sequence s, d
 
-    s = 2 * (self[Y] - self[OUTPUT]) * call_func(func_sigma_derivative, {self[OUTPUT]})
     -- # application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
     -- d_weights2 = np.dot(self.layer1.T, (2*(self.y - self.output) * sigmoid_derivative(self.output)))
-    d_weights2 = MatrixMultiplication(MatrixTransformation(self[LAYERS][1]), s)
+
+    s = 2 * (self[Y] - self[OUTPUT]) * call_func(func_sigma_derivative, {self[OUTPUT]})
+
+    d = repeat(0, length(self[WEIGHTS]))
+    self[LAYERS] = {self[INPUT]} & self[LAYERS]
+    d[$] = MatrixMultiplication(MatrixTransformation(self[LAYERS][$]), s)
+    for i = length(d) - 1 to 1 by -1 do
+        s = MatrixMultiplication(s, MatrixTransformation(self[WEIGHTS][i + 1]) * call_func(func_sigma_derivative, {self[LAYERS][i]}))
+
+        d[i] = MatrixMultiplication(MatrixTransformation(self[LAYERS][i]), s)
+    end for
+    self[LAYERS] = self[LAYERS][2..$]
+    self[WEIGHTS] += d
+    return self
+
     -- d_weights1 = np.dot(self.input.T,  (np.dot(2*(self.y - self.output) * sigmoid_derivative(self.output), self.weights2.T) * sigmoid_derivative(self.layer1)))
-    d_weights1 = MatrixMultiplication(MatrixTransformation(self[INPUT]), MatrixMultiplication(s, MatrixTransformation(self[WEIGHTS][2]) * call_func(func_sigma_derivative, {self[LAYERS[1]]})))
+
     -- # update the weights with the derivative (slope) of the loss function
     -- self.weights1 += d_weights1
-    self[WEIGHTS][1] += d_weights1
     -- self.weights2 += d_weights2
-    self[WEIGHTS][2] += d_weights2
-    return self
 end function
 
 /*
