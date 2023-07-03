@@ -111,10 +111,12 @@ public function BackPropagation(sequence self)
     -- # application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
     -- d_weights2 = np.dot(self.layer1.T, (2*(self.y - self.output) * sigmoid_derivative(self.output)))
 
-    s = 2 * (self[Y] - self[OUTPUT]) * sigmoid_derivative(self[OUTPUT])
 
     d = repeat(0, length(self[WEIGHTS]))
     self[LAYERS] = {self[INPUT]} & self[LAYERS]
+
+    s = 2 * (self[Y] - self[OUTPUT]) * sigmoid_derivative(self[OUTPUT])
+
     d[$] = MatrixMultiplication(MatrixTransformation(self[LAYERS][$]), s)
     for i = length(d) - 1 to 1 by -1 do
         s = ( MatrixMultiplication( s, MatrixTransformation(self[WEIGHTS][i + 1]) ) * sigmoid_derivative(self[LAYERS][i]) )
@@ -124,6 +126,7 @@ public function BackPropagation(sequence self)
     self[LAYERS] = self[LAYERS][2..$]
     self[WEIGHTS] += d
     return self
+
 
     -- d_weights1 = np.dot(self.input.T,  (np.dot(2*(self.y - self.output) * sigmoid_derivative(self.output), self.weights2.T) * sigmoid_derivative(self.layer1)))
     -- # update the weights with the derivative (slope) of the loss function
