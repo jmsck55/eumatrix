@@ -35,14 +35,14 @@ public function IsMatrix(sequence a, integer strictMatrix = 0)
     return 1
 end function
 
+public type Matrix(sequence a)
+-- Matrix() type can be a row by column matrix of anything.
+    return IsMatrix(a)
+end type
+
 public type MatrixStrict(sequence a)
 -- MatrixStrict() type has to be a row by column matrix of atoms.
     return IsMatrix(a, 1)
-end type
-
-public type Matrix(sequence a)
--- Matrix() type has less type checking, and can be a row by column matrix of anything.
-    return IsMatrix(a)
 end type
 
 public function IsMatrixMultiply(sequence a, sequence b)
