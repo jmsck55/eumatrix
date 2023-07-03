@@ -15,6 +15,20 @@ public function cols(sequence a)
     return length(a[1])
 end function
 
+public type IsMatrix(sequence a)
+    integer c
+    if length(s) = 0 then
+        return 0
+    end if
+    c = length(a[1])
+    for i = 1 to length(s) do
+        if c != length(a[i])
+            return 0
+        end if
+    end for
+    return 1
+end type
+
 public function IsMatrixMultiply(sequence a, sequence b)
     return cols(a) = rows(b)
 end function
