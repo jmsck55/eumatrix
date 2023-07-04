@@ -6,6 +6,14 @@ namespace deeplearning
 public include std/math.e
 public include matrix.e
 
+export function GetUseObjectNum()
+    return OBJECT_NUM
+end function
+
+export procedure SetUseObjectNum(integer i)
+    OBJECT_NUM = i
+end procedure
+
 -- input layer, x
 -- hidden layers
 -- output layer, y
