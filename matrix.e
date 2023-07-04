@@ -1,5 +1,5 @@
 -- Copyright (c) 2023 James Cook
--- Matrix multiplication
+-- Matrix operations, including matrix multiplication, and matrix transformation
 
 namespace matrix
 
@@ -15,8 +15,24 @@ public function cols(sequence a)
     return length(a[1])
 end function
 
+public function GetRows(sequence s, integer pos, integer xpos)
+    return s[pos..xpos]
+end function
+
+public function ReplaceRows(sequence s, sequence x, integer pos, integer xpos)
+    return s[1..pos - 1] & x & s[xpos + 1..$]
+end function
+
 public function GetRow(sequence s, integer pos)
     return s[pos]
+end function
+
+public function ReplaceRow(sequence s, sequence x, integer pos)
+    if cols(s) != length(x) then
+        abort(1/0)
+    end if
+    s[pos] = x
+    return s
 end function
 
 public function InsertRow(sequence s, sequence x, integer pos)
@@ -30,6 +46,25 @@ public function RemoveRow(sequence s, integer pos)
     return remove(s, pos)
 end function
 
+public function GetCols(sequence s, integer pos, integer xpos)
+-- returns a matrix
+    sequence c
+    c = repeat(0, length(s))
+    for i = 1 to length(s) do
+        c[i] = s[i][pos..xpos]
+    end for
+    return c
+end function
+
+public function ReplaceCols(sequence s, sequence x, integer pos, integer xpos)
+    sequence c
+    c = repeat(0, length(s))
+    for i = 1 to length(s) do
+        c[i] = s[i][1..pos - 1] & x & s[i][xpos + 1..$]
+    end for
+    return c
+end function
+
 public function GetCol(sequence s, integer pos)
 -- Get Column, return as a Row
     sequence c
@@ -38,6 +73,17 @@ public function GetCol(sequence s, integer pos)
         c[i] = s[i][pos]
     end for
     return c
+end function
+
+public function ReplaceCol(sequence s, sequence x, integer pos)
+-- Replace Column, as a Row
+    if length(s) != length(x) then
+        abort(1/0)
+    end if
+    for i = 1 to length(s) do
+        s[i][pos] = x[i]
+    end for
+    return s
 end function
 
 public function InsertCol(sequence s, sequence x, integer pos)
@@ -58,6 +104,8 @@ public function RemoveCol(sequence s, integer pos)
     end for
     return s
 end function
+
+-- Operations: * + -
 
 public function IsMatrix(sequence a, integer strictMatrix = 0)
     integer c
