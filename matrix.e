@@ -61,7 +61,7 @@ public function ReplaceCols(sequence s, sequence x, integer pos, integer xpos)
     sequence c
     c = repeat(0, length(s))
     for i = 1 to length(s) do
-        c[i] = s[i][1..pos - 1] & x & s[i][xpos + 1..$]
+        c[i] = s[i][1..pos - 1] & x[i] & s[i][xpos + 1..$]
     end for
     return c
 end function
@@ -108,15 +108,18 @@ end function
 
 -- Operations: * + -
 
-public function MultiplyArray(sequence s, object x)
+public function Multiply(sequence s, object x)
+    -- Multiply an array or a matrix with an object.
     return s * x
 end function
 
-public function AddArray(sequence s, object x)
+public function Add(sequence s, object x)
+    -- Add an array or a matrix with an object.
     return s + x
 end function
 
-public function SubtractArray(sequence s, object x)
+public function Subtract(sequence s, object x)
+    -- Subtract an array or a matrix with an object.
     return s - x
 end function
 
