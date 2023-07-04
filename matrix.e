@@ -15,6 +15,50 @@ public function cols(sequence a)
     return length(a[1])
 end function
 
+public function GetRow(sequence s, integer pos)
+    return s[pos]
+end function
+
+public function InsertRow(sequence s, sequence x, integer pos)
+    if cols(s) != length(x) then
+        abort(1/0)
+    end if
+    return insert(s, x, pos)
+end function
+
+public function RemoveRow(sequence s, integer pos)
+    return remove(s, pos)
+end function
+
+public function GetCol(sequence s, integer pos)
+-- Get Column, return as a Row
+    sequence c
+    c = repeat(0, length(s))
+    for i = 1 to length(s) do
+        c[i] = s[i][pos]
+    end for
+    return c
+end function
+
+public function InsertCol(sequence s, sequence x, integer pos)
+-- Insert Column, as a Row
+    if length(s) != length(x) then
+        abort(1/0)
+    end if
+    for i = 1 to length(s) do
+        s[i] = insert(s[i], x[i], pos)
+    end for
+    return s
+end function
+
+public function RemoveCol(sequence s, integer pos)
+-- Remove Column, return sequence
+    for i = 1 to length(s) do
+        s[i] = remove(s[i], pos)
+    end for
+    return s
+end function
+
 public function IsMatrix(sequence a, integer strictMatrix = 0)
     integer c
     if length(a) = 0 then
