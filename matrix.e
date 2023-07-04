@@ -3,6 +3,23 @@
 
 namespace matrix
 
+-- NOTES:
+--
+-- OBJECT_NUM,
+-- Set to one (1) to have object elements of matrices,
+-- Otherwise, elements must be atoms.
+-- Limited scope to export for now.
+--
+export integer OBJECT_NUM = 0 -- 1 for no type checking of num type.
+
+public type num(object x)
+    if OBJECT_NUM then
+        return 1
+    else
+        return atom(x)
+    end if
+end type
+
 public function NewMatrix(integer rows, integer cols)
     return repeat(repeat(0, cols), rows)
 end function
@@ -13,150 +30,6 @@ end function
 
 public function cols(sequence a)
     return length(a[1])
-end function
-
-public function GetRows(sequence s, integer pos, integer xpos)
-    return s[pos..xpos]
-end function
-
-public function ReplaceRows(sequence s, sequence x, integer pos, integer xpos)
-    return s[1..pos - 1] & x & s[xpos + 1..$]
-end function
-
-public function GetRow(sequence s, integer pos)
-    return s[pos]
-end function
-
-public function ReplaceRow(sequence s, sequence x, integer pos)
-    if cols(s) != length(x) then
-        abort(1/0)
-    end if
-    s[pos] = x
-    return s
-end function
-
-public function InsertRow(sequence s, sequence x, integer pos)
-    if cols(s) != length(x) then
-        abort(1/0)
-    end if
-    return insert(s, x, pos)
-end function
-
-public function RemoveRow(sequence s, integer pos)
-    return remove(s, pos)
-end function
-
-public function GetCols(sequence s, integer pos, integer xpos)
--- takes a matrix, returns a matrix
-    sequence c
-    c = repeat(0, length(s))
-    for i = 1 to length(s) do
-        c[i] = s[i][pos..xpos]
-    end for
-    return c
-end function
-
-public function ReplaceCols(sequence s, sequence x, integer pos, integer xpos)
--- takes two matrices, returns a matrix
-    sequence c
-    c = repeat(0, length(s))
-    for i = 1 to length(s) do
-        c[i] = s[i][1..pos - 1] & x[i] & s[i][xpos + 1..$]
-    end for
-    return c
-end function
-
-public function GetCol(sequence s, integer pos)
--- Get Column, return as a Row
-    sequence c
-    c = repeat(0, length(s))
-    for i = 1 to length(s) do
-        c[i] = s[i][pos]
-    end for
-    return c
-end function
-
-public function ReplaceCol(sequence s, sequence x, integer pos)
--- Replace Column, as a Row
-    if length(s) != length(x) then
-        abort(1/0)
-    end if
-    for i = 1 to length(s) do
-        s[i][pos] = x[i]
-    end for
-    return s
-end function
-
-public function InsertCol(sequence s, sequence x, integer pos)
--- Insert Column, as a Row
-    if length(s) != length(x) then
-        abort(1/0)
-    end if
-    for i = 1 to length(s) do
-        s[i] = insert(s[i], x[i], pos)
-    end for
-    return s
-end function
-
-public function RemoveCol(sequence s, integer pos)
--- Remove Column, return sequence
-    for i = 1 to length(s) do
-        s[i] = remove(s[i], pos)
-    end for
-    return s
-end function
-
--- Operations: * + -
-
-public function Multiply(sequence s, object x)
-    -- Multiply an array or a matrix with an object.
-    return s * x
-end function
-
-public function Add(sequence s, object x)
-    -- Add an array or a matrix with an object.
-    return s + x
-end function
-
-public function Subtract(sequence s, object x)
-    -- Subtract an array or a matrix with an object.
-    return s - x
-end function
-
-public function MultiplyRow(sequence s, object x, integer pos)
-    s[pos] *= x
-    return s
-end function
-
-public function AddRow(sequence s, object x, integer pos)
-    s[pos] += x
-    return s
-end function
-
-public function SubtractRow(sequence s, object x, integer pos)
-    s[pos] -= x
-    return s
-end function
-
-public function MultiplyCol(sequence s, object x, integer pos)
-    for i = 1 to length(s) do
-        s[i][pos] *= x
-    end for
-    return s
-end function
-
-public function AddCol(sequence s, object x, integer pos)
-    for i = 1 to length(s) do
-        s[i][pos] += x
-    end for
-    return s
-end function
-
-public function SubtractCol(sequence s, object x, integer pos)
-    for i = 1 to length(s) do
-        s[i][pos] -= x
-    end for
-    return s
 end function
 
 public function IsMatrix(sequence a, integer strictMatrix = 0)
@@ -179,21 +52,21 @@ public function IsMatrix(sequence a, integer strictMatrix = 0)
     return 1
 end function
 
-public type Matrix(sequence a)
--- Matrix() type can be a row by column matrix of anything.
+public type matrix(sequence a)
+-- matrix() type can be a row by column matrix of anything.
     return IsMatrix(a)
 end type
 
-public type MatrixStrict(sequence a)
--- MatrixStrict() type has to be a row by column matrix of atoms.
+public type matrixStrict(sequence a)
+-- matrixStrict() type has to be a row by column matrix of atoms.
     return IsMatrix(a, 1)
 end type
 
-public function IsMatrixMultiply(sequence a, sequence b)
+public function IsMatrixMultiply(matrix a, matrix b)
     return cols(a) = rows(b)
 end function
 
-public function MatrixMultiplication(sequence a, sequence b)
+public function MatrixMultiplication(matrix a, matrix b)
     sequence c
     integer m
     object sum
@@ -213,7 +86,7 @@ public function MatrixMultiplication(sequence a, sequence b)
     return c
 end function
 
-public function MatrixTransformation(sequence a)
+public function MatrixTransformation(matrix a)
     sequence ret, tmp
     integer aRows, aCols
     aRows = rows(a)
@@ -227,4 +100,158 @@ public function MatrixTransformation(sequence a)
         ret[col] = tmp
     end for
     return ret
+end function
+
+public function GetRows(matrix s, integer pos, integer xpos)
+    return s[pos..xpos]
+end function
+
+public function ReplaceRows(matrix s, matrix x, integer pos, integer xpos)
+    matrix r
+    if cols(s) != cols(x) then
+        -- generates an error, even without type checking
+        abort(1/0)
+    end if
+    r = s[1..pos - 1] & x & s[xpos + 1..$]
+    return r
+end function
+
+public function GetRow(matrix s, integer pos)
+    return s[pos]
+end function
+
+public function ReplaceRow(matrix s, sequence x, integer pos)
+    if cols(s) != length(x) then
+        abort(1/0)
+    end if
+    s[pos] = x
+    return s
+end function
+
+public function InsertRow(matrix s, sequence x, integer pos)
+    if cols(s) != length(x) then
+        abort(1/0)
+    end if
+    return insert(s, x, pos)
+end function
+
+public function RemoveRow(matrix s, integer pos)
+    return remove(s, pos)
+end function
+
+public function GetCols(matrix s, integer pos, integer xpos)
+-- takes a matrix, returns a matrix
+    sequence c
+    c = repeat({}, length(s))
+    for i = 1 to length(s) do
+        c[i] = s[i][pos..xpos]
+    end for
+    return c
+end function
+
+public function ReplaceCols(matrix s, matrix x, integer pos, integer xpos)
+-- takes two matrices, returns a matrix
+    sequence c
+    c = repeat({}, length(s))
+    for i = 1 to length(s) do
+        c[i] = s[i][1..pos - 1] & x[i] & s[i][xpos + 1..$]
+    end for
+    return c
+end function
+
+public function GetCol(matrix s, integer pos)
+-- Get Column, return as a Row
+    sequence c
+    c = repeat(0, length(s))
+    for i = 1 to length(s) do
+        c[i] = s[i][pos]
+    end for
+    return c
+end function
+
+public function ReplaceCol(matrix s, sequence x, integer pos)
+-- Replace Column, as a Row
+    if length(s) != length(x) then
+        abort(1/0)
+    end if
+    for i = 1 to length(s) do
+        s[i][pos] = x[i]
+    end for
+    return s
+end function
+
+public function InsertCol(matrix s, sequence x, integer pos)
+-- Insert Column, as a Row
+    sequence c
+    if length(s) != length(x) then
+        abort(1/0)
+    end if
+    c = repeat({}, length(s))
+    for i = 1 to length(s) do
+        c[i] = insert(s[i], x[i], pos)
+    end for
+    return c
+end function
+
+public function RemoveCol(matrix s, integer pos)
+-- Remove Column, return matrix
+    sequence c
+    c = repeat({}, length(s))
+    for i = 1 to length(s) do
+        c[i] = remove(s[i], pos)
+    end for
+    return c
+end function
+
+-- Operations: * + -
+
+public function Multiply(sequence s, num x)
+    -- Multiply an array or a matrix with an object.
+    return s * x
+end function
+
+public function Add(sequence s, num x)
+    -- Add an array or a matrix with an object.
+    return s + x
+end function
+
+public function Subtract(sequence s, num x)
+    -- Subtract an array or a matrix with an object.
+    return s - x
+end function
+
+public function MultiplyRow(matrix s, num x, integer pos)
+    s[pos] *= x
+    return s
+end function
+
+public function AddRow(matrix s, num x, integer pos)
+    s[pos] += x
+    return s
+end function
+
+public function SubtractRow(matrix s, num x, integer pos)
+    s[pos] -= x
+    return s
+end function
+
+public function MultiplyCol(matrix s, num x, integer pos)
+    for i = 1 to length(s) do
+        s[i][pos] *= x
+    end for
+    return s
+end function
+
+public function AddCol(matrix s, num x, integer pos)
+    for i = 1 to length(s) do
+        s[i][pos] += x
+    end for
+    return s
+end function
+
+public function SubtractCol(matrix s, num x, integer pos)
+    for i = 1 to length(s) do
+        s[i][pos] -= x
+    end for
+    return s
 end function
