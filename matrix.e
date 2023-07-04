@@ -47,7 +47,7 @@ public function RemoveRow(sequence s, integer pos)
 end function
 
 public function GetCols(sequence s, integer pos, integer xpos)
--- returns a matrix
+-- takes a matrix, returns a matrix
     sequence c
     c = repeat(0, length(s))
     for i = 1 to length(s) do
@@ -57,6 +57,7 @@ public function GetCols(sequence s, integer pos, integer xpos)
 end function
 
 public function ReplaceCols(sequence s, sequence x, integer pos, integer xpos)
+-- takes two matrices, returns a matrix
     sequence c
     c = repeat(0, length(s))
     for i = 1 to length(s) do
@@ -117,6 +118,42 @@ end function
 
 public function SubtractArray(sequence s, object x)
     return s - x
+end function
+
+public function MultiplyRow(sequence s, object x, integer pos)
+    s[pos] *= x
+    return s
+end function
+
+public function AddRow(sequence s, object x, integer pos)
+    s[pos] += x
+    return s
+end function
+
+public function SubtractRow(sequence s, object x, integer pos)
+    s[pos] -= x
+    return s
+end function
+
+public function MultiplyCol(sequence s, object x, integer pos)
+    for i = 1 to length(s) do
+        s[i][pos] *= x
+    end for
+    return s
+end function
+
+public function AddCol(sequence s, object x, integer pos)
+    for i = 1 to length(s) do
+        s[i][pos] += x
+    end for
+    return s
+end function
+
+public function SubtractCol(sequence s, object x, integer pos)
+    for i = 1 to length(s) do
+        s[i][pos] -= x
+    end for
+    return s
 end function
 
 public function IsMatrix(sequence a, integer strictMatrix = 0)
