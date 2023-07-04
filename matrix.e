@@ -107,6 +107,18 @@ end function
 
 -- Operations: * + -
 
+public function MultiplyArray(sequence s, object x)
+    return s * x
+end function
+
+public function AddArray(sequence s, object x)
+    return s + x
+end function
+
+public function SubtractArray(sequence s, object x)
+    return s - x
+end function
+
 public function IsMatrix(sequence a, integer strictMatrix = 0)
     integer c
     if length(a) = 0 then
