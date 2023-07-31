@@ -1,8 +1,9 @@
 -- Copyright (c) 2023 James Cook
 -- Deep learning using matrix multiplication.
 
--- Should use tan instead of sigmoid.
--- tan is more like the human brain.
+-- NOTE: Hyperbolic tangent (tanh)
+-- Should use tanh instead of sigmoid.
+-- tanh is more like the human brain.
 
 namespace deeplearning
 
