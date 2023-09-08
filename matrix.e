@@ -86,7 +86,7 @@ public function MatrixMultiplication(matrix a, matrix b)
     return c
 end function
 
-public function MatrixTransformation(matrix a)
+public function MatrixTranspose(matrix a)
     sequence ret, tmp
     integer aRows, aCols
     aRows = rows(a)
