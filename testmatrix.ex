@@ -5,10 +5,6 @@ with trace
 
 include matrix.e
 
-without trace
-include deeplearning.e
-with trace
-
 trace(1)
 
 object a, b, c, d
